@@ -9,13 +9,16 @@ import { Actions, RESOURCES } from 'src/common';
 export class CaslAbilityFactory {
   constructor(private prisma: PrismaService) {}
 
-  async createForUser(token: AccessToken) {
+  async createForUser(token: any) {
+
+
     const { can, cannot, build } = new AbilityBuilder<AppAbility>(
       PureAbility as AbilityClass<AppAbility>,
     );
 
+
     const userWithRoles = await this.prisma.user.findUnique({
-      where: { id: token.userId },
+      where: { id: token.sub },
       include: {
         roles: {
           include: {

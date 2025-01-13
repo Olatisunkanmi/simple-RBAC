@@ -1,8 +1,13 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ICreateRole, IUpdateRole } from './interface/role.interface';
 import { PermissionsService } from './permission.service';
 import { Prisma } from '@prisma/client';
+import { Actions, RESOURCES } from 'src/common';
 
 @Injectable()
 export class RolesService {
@@ -15,6 +20,19 @@ export class RolesService {
     const { name, permissions } = dto;
     let Role: any;
 
+    return await this.setupPermissionsForRole(permissions, name);
+
+    // return Role;
+  }
+
+  private async setupPermissionsForRole(
+    permissions: {
+      resource: RESOURCES[];
+      actions?: Actions[];
+      conditions?: object;
+    }[],
+    name: string,
+  ) {
     for (const permission of permissions) {
       const { resource: resources, actions } = permission;
 
@@ -33,7 +51,7 @@ export class RolesService {
         },
       });
 
-      Role = await this.prisma.role.upsert({
+      return await this.prisma.role.upsert({
         where: {
           name,
         },
@@ -54,8 +72,6 @@ export class RolesService {
         },
       });
     }
-
-    return Role;
   }
 
   async userHasRole(userId: string, role: any): Promise<boolean | number> {
@@ -172,64 +188,16 @@ export class RolesService {
           const nameExists = await prisma.role.findFirst({
             where: {
               name,
-              id: { not: roleId }, // Exclude current role
+              id: { not: roleId },
             },
-            // select: {
-            //   name: true
-            // }
           });
 
           if (nameExists) {
             throw new BadRequestException('Role name already exists');
           }
-
-          updatedRole = await prisma.role.update({
-            where: { id: roleId },
-            data: { name },
-          });
         }
 
-        // Update permissions if provided
-        if (permissions) {
-          for (const permission of permissions) {
-            const { resource: resources, actions } = permission;
-
-            await Promise.all(
-              resources.map((resource) =>
-                this.permissionsService.createResourcePermissions(
-                  resource,
-                  actions,
-                ),
-              ),
-            );
-          }
-          // await prisma.permission.createMany({
-          //   data: permissions.map((permission) => ({
-          //     resource: permission.resource,
-          //     action: permission.actions,
-          //     conditions: permission.conditions || {},
-          //   })),
-          //   skipDuplicates: true,
-          // });
-
-          if (existingRole.userPermissions.length > 0) {
-            await prisma.userRolePermission.updateMany({
-              where: { roleId },
-              data: {
-                updatedAt: new Date(),
-              },
-            });
-          }
-
-          return await prisma.role.findUnique({
-            where: { id: roleId },
-            include: {
-              permissions: true,
-            },
-          });
-        }
-
-        return updatedRole;
+        return await this.setupPermissionsForRole(permissions, name);
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {

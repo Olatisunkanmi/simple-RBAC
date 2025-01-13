@@ -15,6 +15,5 @@ export enum RESOURCES {
   permission = 'Permission',
   rolePermission = 'RolePermission',
   posts = 'Post',
-  comments ='comment'
+  comments = 'comment',
 }
-

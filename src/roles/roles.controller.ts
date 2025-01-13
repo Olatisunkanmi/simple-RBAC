@@ -11,9 +11,12 @@ import { CreateRoleDto, UpdateRoleDto } from './dto/create-role.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
 import { RolesService } from './roles.service';
+import { PoliciesGuard } from 'src/ability/policies/policies.guard';
+import { CheckPolicies } from 'src/ability/decorator/check-policies.decorator';
+import { AppAbility } from 'src/ability/ability.types';
+import { Actions, RESOURCES } from 'src/common';
 
-
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PoliciesGuard)
 @ApiBearerAuth()
 @ApiTags('Roles')
 @Controller('roles')
@@ -22,24 +25,24 @@ export class RolesController {
 
   @Put('/:roleId')
   // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Actions.Read, RESOURCES.roles),
+  //   ability.can(Actions.Update, RESOURCES.roles),
   // )
   updateRole(@Param('roleId') roleId: string, @Body() dto: UpdateRoleDto) {
     return this.rolesService.updateRole(roleId, dto);
   }
 
   @Post('/create')
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Actions.Create, RESOURCES.roles),
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Actions.Create, RESOURCES.roles),
+  )
   createRole(@Body() dto: CreateRoleDto) {
     return this.rolesService.createRole(dto);
   }
 
   @Put('/:roleId/users/:userId')
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Actions.Read, RESOURCES.roles),
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Actions.Read, RESOURCES.roles),
+  )
   assignToUser(
     @Param('userId') userId: string,
     @Param('roleId') roleId: string,

@@ -7,13 +7,13 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import {RegisterDto} from './dto/auth.dto';
+import { RegisterDto } from './dto/auth.dto';
 
 import { AppUtilities } from 'src/app.utilities';
 import { PrismaClient } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
   private refreshTokenSecret: string;
 
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private jwtService: JwtService,
     private configService: ConfigService,
     private prisma: PrismaClient,
@@ -51,44 +51,43 @@ export class AuthService {
       }),
     ]);
 
- 
     return {
       access_token,
       refresh_token,
     };
   }
 
-  async registerUser(dto: RegisterDto) {
-    const user = await this.userService.createUser({ email: dto.email });
+  async register(dto: RegisterDto) {
+    const user = await this.prisma.user.create({
+      data: {
+        email: dto.email,
+        password: await AppUtilities.hashPassword(dto.password),
+      },
+      });
 
     if (!user) {
-      throw new ConflictException("USER_CONFLICT");
+      throw new ConflictException('USER_CONFLICT');
     }
 
-
-    
+    return user
   }
-
-  
 
   async login(dto: RegisterDto) {
     try {
-      const user = await this.userService.findUserByEmail(dto.email);
-     
+      const user = await this.userService.findByEmail(dto.email);
 
       const isMatch = await AppUtilities.validatePassword(
         dto.password,
         user.password,
       );
 
-      if (!isMatch) throw new UnauthorizedException("INCORRECT_CREDS");
+      if (!isMatch) throw new UnauthorizedException('INCORRECT_CREDS');
 
       return this.signToken(user.id);
     } catch (error) {
-      if (error.code == 'P2025') throw new ForbiddenException("INCORRECT_CREDS");
+      if (error.code == 'P2025')
+        throw new ForbiddenException('INCORRECT_CREDS');
       throw error;
     }
   }
-
-
 }

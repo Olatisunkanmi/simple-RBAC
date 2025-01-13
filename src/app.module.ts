@@ -6,6 +6,7 @@ import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { CoreModule } from 'config/core.module';
 import { configuration, validate } from 'config/configuration';
+import { AbilityModule } from './ability/ability.module';
 
 @Module({
   imports: [
@@ -15,9 +16,10 @@ import { configuration, validate } from 'config/configuration';
       validate,
     }),
     CoreModule,
-    PrismaModule, 
+    PrismaModule,
     UsersModule,
     PostsModule,
+    AbilityModule,
     AuthModule,
   ],
   controllers: [],

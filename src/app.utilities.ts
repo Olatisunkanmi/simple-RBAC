@@ -153,10 +153,10 @@ export class AppUtilities {
       ? error.meta.cause
         ? error.meta.cause
         : error.meta.field_name
-          ? error.meta.field_name
-          : error.meta.column
-            ? error.meta.table
-            : error.meta.table
+        ? error.meta.field_name
+        : error.meta.column
+        ? error.meta.table
+        : error.meta.table
       : error.message;
     switch (errorCode) {
       case 'P0000':
