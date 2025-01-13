@@ -10,7 +10,7 @@ export class PermissionsService {
     return this.prisma.permission.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return this.prisma.permission.findUnique({ where: { id } });
   }
 
@@ -18,11 +18,11 @@ export class PermissionsService {
     return this.prisma.permission.create({ data });
   }
 
-  async update(id: number, data: any) {
+  async update(id: string, data: any) {
     return this.prisma.permission.update({ where: { id }, data });
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return this.prisma.permission.delete({ where: { id } });
   }
 }

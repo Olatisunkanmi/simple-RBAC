@@ -1,13 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ICreateRole, IUpdateRole } from './interface/role.interface';
+import { PermissionsService } from './permission.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class RolesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private permissionsService: PermissionsService,
+  ) {}
 
   async createRole(dto: ICreateRole) {
     const { name, permissions } = dto;
-    let Role: Role;
+    let Role: any;
 
     for (const permission of permissions) {
       const { resource: resources, actions } = permission;
@@ -52,54 +58,51 @@ export class RolesService {
     return Role;
   }
 
-  async userHasRole(
-    userId: string,
-    role: roleTypes,
-  ): Promise<boolean | number> {
+  async userHasRole(userId: string, role: any): Promise<boolean | number> {
     return (
-      (await this.count({
+      (await this.prisma.role.count({
         where: {
           userId,
-          type: role,
+          // type: role,
         },
       })) > 0
     );
   }
 
-  async removeRole(userId: string, role: roleTypes): Promise<void> {
-    await this.deleteMany({
+  async removeRole(userId: string, role: any): Promise<void> {
+    await this.prisma.role.deleteMany({
       where: {
         userId,
-        type: role,
+        // type: role,
       },
     });
   }
 
-  async getUserRoles(userId: string): Promise<roleTypes[]> {
-    const roles = await this.findMany({
+  async getUserRoles(userId: string): Promise<any[]> {
+    const roles = await this.prisma.role.findMany({
       where: {
         userId,
       },
       select: {
-        type: true,
+        // type: true,
       },
     });
-    return roles.map((role) => role.type);
+    return roles.map((role) => role);
   }
 
-  async countUsersWithRole(role: roleTypes): Promise<number> {
-    const count = await this.count({
+  async countUsersWithRole(role: any): Promise<number> {
+    const count = await this.prisma.role.count({
       where: {
-        type: role,
+        // type: role,
       },
     });
     return count;
   }
 
-  async listUsersWithRole(role: roleTypes): Promise<string[]> {
-    const users = await this.findMany({
+  async listUsersWithRole(role: any): Promise<string[]> {
+    const users = await this.prisma.role.findMany({
       where: {
-        type: role,
+        // type: role,
       },
       select: {
         userId: true,
@@ -111,17 +114,17 @@ export class RolesService {
   async getRolePermissions(roleId: string) {}
 
   async findOne(id: string) {
-    return this.findFirst({
+    return this.prisma.role.findFirst({
       where: { id },
     });
   }
 
   async fetchAllRoles() {
-    return await this.findMany({});
+    return await this.prisma.role.findMany({});
   }
 
   async getById(id: string) {
-    return await this.findUnique({
+    return await this.prisma.role.findUnique({
       where: {
         id,
       },

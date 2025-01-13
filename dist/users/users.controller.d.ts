@@ -3,33 +3,33 @@ export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     findAll(): Promise<{
-        name: string | null;
-        id: number;
+        id: string;
         email: string;
         password: string;
+        name: string | null;
     }[]>;
-    findOne(id: number): Promise<{
-        name: string | null;
-        id: number;
+    findOne(id: string): Promise<{
+        id: string;
         email: string;
         password: string;
+        name: string | null;
     }>;
     create(data: any): Promise<{
-        name: string | null;
-        id: number;
+        id: string;
         email: string;
         password: string;
+        name: string | null;
     }>;
-    update(id: number, data: any): Promise<{
-        name: string | null;
-        id: number;
+    update(id: string, data: any): Promise<{
+        id: string;
         email: string;
         password: string;
+        name: string | null;
     }>;
-    delete(id: number): Promise<{
-        name: string | null;
-        id: number;
+    delete(id: string): Promise<{
+        id: string;
         email: string;
         password: string;
+        name: string | null;
     }>;
 }

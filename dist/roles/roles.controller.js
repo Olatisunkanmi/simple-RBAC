@@ -14,64 +14,71 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RolesController = void 0;
 const common_1 = require("@nestjs/common");
+const create_role_dto_1 = require("./dto/create-role.dto");
+const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("../guards/jwt-auth.guard");
 const roles_service_1 = require("./roles.service");
 let RolesController = class RolesController {
     constructor(rolesService) {
         this.rolesService = rolesService;
     }
-    findAll() {
-        return this.rolesService.findAll();
+    updateRole(roleId, dto) {
+        return this.rolesService.updateRole(roleId, dto);
     }
-    findOne(id) {
-        return this.rolesService.findOne(id);
+    createRole(dto) {
+        return this.rolesService.createRole(dto);
     }
-    create(data) {
-        return this.rolesService.create(data);
+    assignToUser(userId, roleId) {
+        return this.rolesService.assignRoleToUser(userId, roleId);
     }
-    update(id, data) {
-        return this.rolesService.update(id, data);
+    async fetchAllRoles() {
+        return this.rolesService.fetchAllRoles();
     }
-    delete(id) {
-        return this.rolesService.delete(id);
+    findRolebyId(roleId) {
+        return this.rolesService.getById(roleId);
     }
 };
 exports.RolesController = RolesController;
 __decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], RolesController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Get)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
-    __metadata("design:returntype", void 0)
-], RolesController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", void 0)
-], RolesController.prototype, "create", null);
-__decorate([
-    (0, common_1.Put)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Put)('/:roleId'),
+    __param(0, (0, common_1.Param)('roleId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:paramtypes", [String, create_role_dto_1.UpdateRoleDto]),
     __metadata("design:returntype", void 0)
-], RolesController.prototype, "update", null);
+], RolesController.prototype, "updateRole", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.Post)('/create'),
+    __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number]),
+    __metadata("design:paramtypes", [create_role_dto_1.CreateRoleDto]),
     __metadata("design:returntype", void 0)
-], RolesController.prototype, "delete", null);
+], RolesController.prototype, "createRole", null);
+__decorate([
+    (0, common_1.Put)('/:roleId/users/:userId'),
+    __param(0, (0, common_1.Param)('userId')),
+    __param(1, (0, common_1.Param)('roleId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], RolesController.prototype, "assignToUser", null);
+__decorate([
+    (0, common_1.Get)(''),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], RolesController.prototype, "fetchAllRoles", null);
+__decorate([
+    (0, common_1.Get)('/:roleId'),
+    __param(0, (0, common_1.Param)('roleId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], RolesController.prototype, "findRolebyId", null);
 exports.RolesController = RolesController = __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiTags)('Roles'),
     (0, common_1.Controller)('roles'),
     __metadata("design:paramtypes", [roles_service_1.RolesService])
 ], RolesController);

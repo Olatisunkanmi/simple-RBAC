@@ -12,10 +12,28 @@ model User {
   email    String   @unique
   password String 
   name     String?
+  AccessToken      AccessToken[]
+
   posts    Post[]
   comments Comment[]
    roles            Role[]               @relation("user_roles")
   rolePermissions  UserRolePermission[]
+}
+
+
+model AccessToken {
+  id           String    @id @default(uuid())
+  expiresIn    String    @map("expires_in")
+  isUsed       Boolean   @default(false) @map("is_used")
+  userId       String    @map("user_id")
+  refreshToken String?   @map("refresh_token")
+  usedAt       DateTime?
+  token        String    @unique
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+
+  @@map("access_token")
 }
 
 model Post {
@@ -77,3 +95,9 @@ model UserRolePermission {
   @@unique([userId, roleId])
 }
 
+enum TokenType {
+  AUTH @map("auth")
+  OTP  @map("otp")
+
+  @@map("token_type")
+}

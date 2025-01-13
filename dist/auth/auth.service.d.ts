@@ -8,9 +8,9 @@ export declare class AuthService {
     validateUser(username: string, pass: string): Promise<any>;
     login(loginDto: LoginDto): Promise<void>;
     register(body: RegisterDto): Promise<{
-        name: string | null;
-        id: number;
+        id: string;
         email: string;
         password: string;
+        name: string | null;
     }>;
 }

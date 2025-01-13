@@ -1,10 +1,9 @@
-import { IsEnum, IsString } from 'class-validator';
-import { roleTypes } from '@prisma/client';
+import {  IsString } from 'class-validator';
 
 export class AssignRoleToUser {
   @IsString()
   identity: string;
 
-  @IsEnum(roleTypes)
-  role: roleTypes;
+ 
+  role: any;
 }

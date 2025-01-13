@@ -1,25 +1,39 @@
+import { CreateRoleDto, UpdateRoleDto } from './dto/create-role.dto';
 import { RolesService } from './roles.service';
 export declare class RolesController {
     private readonly rolesService;
     constructor(rolesService: RolesService);
-    findAll(): Promise<{
+    updateRole(roleId: string, dto: UpdateRoleDto): Promise<any>;
+    createRole(dto: CreateRoleDto): Promise<any>;
+    assignToUser(userId: string, roleId: string): Promise<{
+        id: string;
+    }>;
+    fetchAllRoles(): Promise<{
+        id: string;
         name: string;
-        id: number;
+        description: string | null;
+        userId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }[]>;
-    findOne(id: number): Promise<{
+    findRolebyId(roleId: string): Promise<{
+        users: {
+            id: string;
+        }[];
+        permissions: {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            action: string;
+            resource: string;
+            conditions: import("@prisma/client/runtime/library").JsonValue | null;
+        }[];
+    } & {
+        id: string;
         name: string;
-        id: number;
-    }>;
-    create(data: any): Promise<{
-        name: string;
-        id: number;
-    }>;
-    update(id: number, data: any): Promise<{
-        name: string;
-        id: number;
-    }>;
-    delete(id: number): Promise<{
-        name: string;
-        id: number;
+        description: string | null;
+        userId: string | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
 }

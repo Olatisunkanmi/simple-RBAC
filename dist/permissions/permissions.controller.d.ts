@@ -3,23 +3,43 @@ export declare class PermissionsController {
     private readonly permissionsService;
     constructor(permissionsService: PermissionsService);
     findAll(): Promise<{
-        name: string;
-        id: number;
+        id: string;
+        action: string;
+        resource: string;
+        conditions: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }[]>;
-    findOne(id: number): Promise<{
-        name: string;
-        id: number;
+    findOne(id: string): Promise<{
+        id: string;
+        action: string;
+        resource: string;
+        conditions: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
     create(data: any): Promise<{
-        name: string;
-        id: number;
+        id: string;
+        action: string;
+        resource: string;
+        conditions: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
-    update(id: number, data: any): Promise<{
-        name: string;
-        id: number;
+    update(id: string, data: any): Promise<{
+        id: string;
+        action: string;
+        resource: string;
+        conditions: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
-    delete(id: number): Promise<{
-        name: string;
-        id: number;
+    delete(id: string): Promise<{
+        id: string;
+        action: string;
+        resource: string;
+        conditions: import("@prisma/client/runtime/library").JsonValue | null;
+        createdAt: Date;
+        updatedAt: Date;
     }>;
 }

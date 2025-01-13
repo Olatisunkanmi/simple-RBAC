@@ -18,3 +18,4 @@ export enum RESOURCES {
   exams = 'Exam',
   questions = 'Question',
 }
+

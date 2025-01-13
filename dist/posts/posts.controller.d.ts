@@ -6,30 +6,30 @@ export declare class PostsController {
         id: number;
         title: string;
         content: string | null;
-        authorId: number;
+        authorId: string;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
         title: string;
         content: string | null;
-        authorId: number;
+        authorId: string;
     }>;
     create(data: any): Promise<{
         id: number;
         title: string;
         content: string | null;
-        authorId: number;
+        authorId: string;
     }>;
     update(id: number, data: any): Promise<{
         id: number;
         title: string;
         content: string | null;
-        authorId: number;
+        authorId: string;
     }>;
     delete(id: number): Promise<{
         id: number;
         title: string;
         content: string | null;
-        authorId: number;
+        authorId: string;
     }>;
 }
