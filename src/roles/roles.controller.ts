@@ -24,9 +24,9 @@ export class RolesController {
   constructor(private readonly rolesService: RolesService) {}
 
   @Put('/:roleId')
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Actions.Update, RESOURCES.roles),
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Actions.Update, RESOURCES.roles),
+  )
   updateRole(@Param('roleId') roleId: string, @Body() dto: UpdateRoleDto) {
     return this.rolesService.updateRole(roleId, dto);
   }
@@ -51,17 +51,17 @@ export class RolesController {
   }
 
   @Get('')
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Actions.Read, RESOURCES.roles),
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Actions.Read, RESOURCES.roles),
+  )
   async fetchAllRoles() {
     return this.rolesService.fetchAllRoles();
   }
 
   @Get('/:roleId')
-  // @CheckPolicies((ability: AppAbility) =>
-  //   ability.can(Actions.Read, RESOURCES.roles),
-  // )
+  @CheckPolicies((ability: AppAbility) =>
+    ability.can(Actions.Read, RESOURCES.roles),
+  )
   findRolebyId(@Param('roleId') roleId: string) {
     return this.rolesService.getById(roleId);
   }
