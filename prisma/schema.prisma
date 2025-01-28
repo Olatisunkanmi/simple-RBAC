@@ -8,18 +8,103 @@ generator client {
 }
 
 model User {
-  id        String        @id @default(uuid())
-  email    String   @unique
-  password String 
-  name     String?
-  AccessToken      AccessToken[]
+  id             String   @id @default(cuid())
+  email          String   @unique
+  fullName       String
+  password       String
+  phoneNumber    String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organizationId String?
 
-  posts    Post[]
-  comments Comment[]
-   roles            Role[]               @relation("user_roles")
-  rolePermissions  UserRolePermission[]
+  roles        UserRole[]
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  AccessToken  AccessToken[]
+  Post         Post[]
+  Comment      Comment[]
+
+  @@map("users")
 }
 
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  permissions    Permission[]
+  users          UserRole[]
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String?
+
+  @@map("roles")
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@map("user_roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  action      String // create, read, update, delete, manage
+  resource    String // User, Profile, etc.
+  conditions  Json? // Store conditions as JSON
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  role   Role              @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  roleId String
+  fields PermissionField[]
+
+  @@unique([roleId, action, resource])
+  @@map("permissions")
+}
+
+model PermissionField {
+  id          String   @id @default(cuid())
+  name        String // Field name
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  permissionId String
+
+  @@unique([permissionId, name])
+  @@map("permission_fields")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users User[]
+  roles Role[]
+
+  @@map("organizations")
+}
 
 model AccessToken {
   id           String    @id @default(uuid())
@@ -37,67 +122,19 @@ model AccessToken {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
-  comments  Comment[]
+  id       Int       @id @default(autoincrement())
+  title    String
+  content  String?
+  authorId String
+  author   User      @relation(fields: [authorId], references: [id])
+  comments Comment[]
 }
 
 model Comment {
-  id      Int    @id @default(autoincrement())
-  content String
-  postId  Int
-  post    Post   @relation(fields: [postId], references: [id])
+  id       Int    @id @default(autoincrement())
+  content  String
+  postId   Int
+  post     Post   @relation(fields: [postId], references: [id])
   authorId String
-  author  User   @relation(fields: [authorId], references: [id])
-}
-
-model Role {
-  id              String               @id @default(uuid())
-  name            String               @unique
-  description     String?
-  userId          String?
-  userPermissions UserRolePermission[]
-  permissions     Permission[]         @relation("roles_permissions")
-  users           User[]               @relation("user_roles")
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
-
-  @@map("roles")
-}
-
-model Permission {
-  id                  String               @id @default(uuid())
-  action              String
-  resource            String
-  conditions          Json?
-  roles               Role[]               @relation("roles_permissions")
-  userRolePermissions UserRolePermission[] @relation("UserRolePermissions")
-  createdAt           DateTime             @default(now())
-  updatedAt           DateTime             @updatedAt
-
-  @@unique([action, resource])
-  @@map("permissions")
-}
-
-model UserRolePermission {
-  id          String       @id @default(uuid())
-  user        User         @relation(fields: [userId], references: [id])
-  userId      String
-  role        Role         @relation(fields: [roleId], references: [id])
-  roleId      String
-  permissions Permission[] @relation("UserRolePermissions")
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-
-  @@unique([userId, roleId])
-}
-
-enum TokenType {
-  AUTH @map("auth")
-  OTP  @map("otp")
-
-  @@map("token_type")
+  author   User   @relation(fields: [authorId], references: [id])
 }
