@@ -10,9 +10,7 @@ generator client {
 model User {
   id             String   @id @default(cuid())
   email          String   @unique
-  fullName       String
   password       String
-  phoneNumber    String?
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -68,7 +66,6 @@ model Permission {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relations
   role   Role              @relation(fields: [roleId], references: [id], onDelete: Cascade)
   roleId String
   fields PermissionField[]

@@ -36,10 +36,12 @@ export class AuthService {
 
   async signToken(
     userId: string,
-  ): Promise<{ access_token: string; refresh_token: string }> {
+  ): Promise<{ access_token: string; refresh_token: string; sub: any }> {
     const payload = {
       sub: userId,
     };
+
+    console.log(payload);
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, {
         expiresIn: this.jwtExpires,
@@ -54,6 +56,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
+      sub: payload,
     };
   }
 
@@ -63,13 +66,13 @@ export class AuthService {
         email: dto.email,
         password: await AppUtilities.hashPassword(dto.password),
       },
-      });
+    });
 
     if (!user) {
       throw new ConflictException('USER_CONFLICT');
     }
 
-    return user
+    return user;
   }
 
   async login(dto: RegisterDto) {

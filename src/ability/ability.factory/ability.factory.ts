@@ -14,10 +14,10 @@ export class CaslAbilityFactory {
       PureAbility as AbilityClass<AppAbility>,
     );
 
-    const userWithRoles = await this.prisma.user.findUnique({
-      where: { id: token.sub },
+    const userWithRoles = await this.prisma.userRole.findFirst({
+      where: { userId: token.sub },
       include: {
-        roles: {
+        role: {
           include: {
             permissions: true,
           },
@@ -25,19 +25,29 @@ export class CaslAbilityFactory {
       },
     });
 
-    userWithRoles.roles.forEach((role) => {
-      role.permissions.forEach((permission) => {
+    if (userWithRoles && userWithRoles.role) {
+      userWithRoles.role.permissions.forEach((permission) => {
         const action = permission.action as Actions;
         const resource = permission.resource as RESOURCES;
 
-        if (permission.conditions) {
-          console.log(permission.conditions);
-          can(action, resource, permission.conditions as object);
-        } else {
-          can(action, resource);
-        }
+        
+        // if (permission.fields && permission.fields.create) {
+        //   const fields = permission.fields.create.map((field) => field.name);
+
+        //   if (permission.conditions) {
+        //     can(action, resource, permission.conditions, fields);
+        //   } else {
+        //     can(action, resource, fields);
+        //   }
+        // } else {
+        //   if (permission.conditions) {
+        //     can(action, resource, permission.conditions);
+        //   } else {
+        //     can(action, resource);
+        //   }
+        // }
       });
-    });
+    }
 
     return build();
   }
