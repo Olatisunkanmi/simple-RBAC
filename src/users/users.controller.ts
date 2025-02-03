@@ -7,6 +7,7 @@ import {
   Put,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -24,8 +25,17 @@ export class UsersController {
   ) {}
 
   @Get()
-  findAll() {
-    return this.prisma.user.findMany({});
+  findAll(@Req() req) {
+    const { allowedFields } = req;
+
+    const select = allowedFields.reduce((acc, field) => {
+      acc[field] = true;
+      return acc;
+    }, {});
+
+    return this.prisma.user.findMany({
+      select: select
+    });
   }
 
   @Get(':id')
