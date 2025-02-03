@@ -37,7 +37,7 @@ export class PoliciesGuard implements CanActivate {
       query: request.query,
     });
 
-    const resource = path.split('/')[1]
+    const resource = path.split('/')[1];
 
     const ability = await this.caslAbilityFactory.createForUser(user);
 
@@ -55,7 +55,7 @@ export class PoliciesGuard implements CanActivate {
     );
   }
 
-  private getActionFromRequest(request: Request): string {
+  private getActionFromRequest(request: Request): Actions {
     // Map HTTP methods to CASL actions
     switch (request.method.toLowerCase()) {
       case 'get':

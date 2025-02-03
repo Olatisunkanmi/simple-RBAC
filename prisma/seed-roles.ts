@@ -30,46 +30,46 @@ async function main() {
   //   },
   // });
 
-  // const userRole = await prisma.role.create({
-  //   data: {
-  //     name: 'user',
-  //     description: 'Regular user with limited access',
-  //     isSystem: true,
-  //     organizationId: organization.id,
-  //     permissions: {
-  //       create: [
-  //         {
-  //           action: 'read',
-  //           resource: 'User',
-  //           description: 'Can read own user data',
-  //           conditions: {
-  //             id: '${currentUser.id}',
-  //           },
-  //           fields: {
-  //             create: [
-  //               { name: 'fullName', description: 'User full name' },
-  //               { name: 'email', description: 'User email' },
-  //             ],
-  //           },
-  //         },
-  //         {
-  //           action: 'update',
-  //           resource: 'User',
-  //           description: 'Can update own user data',
-  //           conditions: {
-  //             id: '${currentUser.id}',
-  //           },
-  //           fields: {
-  //             create: [
-  //               { name: 'fullName', description: 'User full name' },
-  //               { name: 'phoneNumber', description: 'User phone number' },
-  //             ],
-  //           },
-  //         },
-  //       ],
-  //     },
-  //   },
-  // });
+  await prisma.role.create({
+    data: {
+      name: 'user',
+      description: 'Regular user with limited access',
+      isSystem: true,
+      organizationId: organization.id,
+      permissions: {
+        create: [
+          {
+            action: 'read',
+            resource: 'User',
+            description: 'Can read own user data',
+            conditions: {
+              id: '${currentUser.id}',
+            },
+            fields: {
+              create: [
+                { name: 'fullName', description: 'User full name' },
+                { name: 'email', description: 'User email' },
+              ],
+            },
+          },
+          {
+            action: 'update',
+            resource: 'User',
+            description: 'Can update own user data',
+            conditions: {
+              id: '${currentUser.id}',
+            },
+            fields: {
+              create: [
+                { name: 'fullName', description: 'User full name' },
+                { name: 'phoneNumber', description: 'User phone number' },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  });
 
   await prisma.role.create({
     data: {

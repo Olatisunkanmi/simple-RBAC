@@ -15,7 +15,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
-    "prisma:migrate:deploy": "prisma migrate deploy"
+    "prisma:migrate:deploy": "prisma migrate deploy",
+    "db.seed.roles": "npx ts-node prisma/seed-roles.ts"
   },
   "dependencies": {
     "@casl/ability": "^6.5.0",

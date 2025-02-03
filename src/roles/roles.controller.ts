@@ -15,39 +15,45 @@ import { PoliciesGuard } from 'src/ability/policies/policies.guard';
 import { CheckPolicies } from 'src/ability/decorator/check-policies.decorator';
 import { AppAbility } from 'src/ability/ability.types';
 import { Actions, RESOURCES } from 'src/common';
+import { PrismaClient } from '@prisma/client';
 
-@UseGuards(JwtAuthGuard, PoliciesGuard)
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 @ApiTags('Roles')
 @Controller('roles')
 export class RolesController {
-  constructor(private readonly rolesService: RolesService) {}
+  constructor(
+    private readonly rolesService: RolesService,
+    private prisma: PrismaClient,
+  ) {}
 
-  @Put('/:roleId')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Actions.Update, RESOURCES.roles),
-  )
-  updateRole(@Param('roleId') roleId: string, @Body() dto: UpdateRoleDto) {
-    return this.rolesService.updateRole(roleId, dto);
-  }
+  // @Put('/:roleId')
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Actions.Update, RESOURCES.roles),
+  // )
+  // updateRole(@Param('roleId') roleId: string, @Body() dto: UpdateRoleDto) {
+  //   return this.rolesService.updateRole(roleId, dto);
+  // }
 
-  @Post('/create')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Actions.Create, RESOURCES.roles),
-  )
-  createRole(@Body() dto: CreateRoleDto) {
-    return this.rolesService.createRole(dto);
-  }
+  // @Post('/create')
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Actions.Create, RESOURCES.roles),
+  // )
+  // createRole(@Body() dto: CreateRoleDto) {
+  //   return this.rolesService.createRole(dto);
+  // }
 
   @Put('/:roleId/users/:userId')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Actions.Read, RESOURCES.roles),
-  )
   assignToUser(
     @Param('userId') userId: string,
     @Param('roleId') roleId: string,
   ) {
-    return this.rolesService.assignRoleToUser(userId, roleId);
+    return this.prisma.userRole.create({
+      data: {
+        roleId,
+        userId,
+      },
+    });
   }
 
   @Get('')
@@ -55,14 +61,23 @@ export class RolesController {
     ability.can(Actions.Read, RESOURCES.roles),
   )
   async fetchAllRoles() {
-    return this.rolesService.fetchAllRoles();
+    return await this.prisma.role.findMany({
+      include: {
+        users: true,
+        permissions: {
+          select: {
+            fields: true,
+          },
+        },
+      },
+    });
   }
 
-  @Get('/:roleId')
-  @CheckPolicies((ability: AppAbility) =>
-    ability.can(Actions.Read, RESOURCES.roles),
-  )
-  findRolebyId(@Param('roleId') roleId: string) {
-    return this.rolesService.getById(roleId);
-  }
+  // @Get('/:roleId')
+  // @CheckPolicies((ability: AppAbility) =>
+  //   ability.can(Actions.Read, RESOURCES.roles),
+  // )
+  // findRolebyId(@Param('roleId') roleId: string) {
+  //   return this.rolesService.getById(roleId);
+  // }
 }
