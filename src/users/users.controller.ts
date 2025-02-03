@@ -16,7 +16,7 @@ import { PoliciesGuard } from 'src/ability/policies/policies.guard';
 
 @UseGuards(JwtAuthGuard, PoliciesGuard)
 @ApiBearerAuth()
-@Controller('users')
+@Controller('User')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
