@@ -42,11 +42,10 @@ export class CaslAbilityFactory {
         if (perm.fields && perm.fields.length > 0) {
           const fields = perm.fields.map((field) => field.name);
 
-          console.log(fields);
+          console.log(perm);
 
+          console.log(fields);
           can(action, resource, fields);
-        } else {
-          can(action, resource);
         }
       });
     }

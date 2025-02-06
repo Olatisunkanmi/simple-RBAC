@@ -28,14 +28,17 @@ export class UsersController {
   findAll(@Req() req) {
     const { allowedFields } = req;
 
-    const select = allowedFields.reduce((acc, field) => {
-      acc[field] = true;
-      return acc;
-    }, {});
+      console.log(allowedFields);
+    // const select = allowedFields.reduce((acc, field) => {
+    //   acc[field] = true;
+    //   return acc;
+    // }, {});
 
-    return this.prisma.user.findMany({
-      select: select
-    });
+    // return this.prisma.user.findMany({
+    //   select: select
+    // });
+
+    return "true";
   }
 
   @Get(':id')
@@ -56,5 +59,34 @@ export class UsersController {
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.usersService.delete(id);
+  }
+}
+
+
+
+@UseGuards(JwtAuthGuard, PoliciesGuard)
+@ApiBearerAuth()
+@Controller('crm/contacts')
+export class CrmUsersController {
+  constructor(
+    private readonly usersService: UsersService,
+    private prisma: PrismaClient,
+  ) {}
+
+  @Get()
+  findAll(@Req() req) {
+    const { allowedFields } = req;
+
+      console.log(allowedFields);
+    // const select = allowedFields.reduce((acc, field) => {
+    //   acc[field] = true;
+    //   return acc;
+    // }, {});
+
+    // return this.prisma.user.findMany({
+    //   select: select
+    // });
+
+    return "true";
   }
 }

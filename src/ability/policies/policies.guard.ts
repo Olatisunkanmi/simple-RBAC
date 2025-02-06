@@ -6,8 +6,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CaslAbilityFactory } from '../ability.factory/ability.factory';
-import { CHECK_POLICIES_KEY } from '../decorator/check-policies.decorator';
-import { AppAbility, PolicyHandler } from '../ability.types';
 import { Actions } from 'src/common';
 
 
@@ -45,6 +43,7 @@ export class PoliciesGuard implements CanActivate {
   }
 
   private getAllowedFields(ability, resource, action) {
+  console.log(ability, resource, action);
     const allFields = ability.M?.filter(
       (rule) =>
         rule.subject.toLowerCase() === resource.toLowerCase() &&
